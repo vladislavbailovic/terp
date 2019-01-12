@@ -2,21 +2,45 @@ import os
 import shutil
 import markdown
 
-def get_files(root):
-    """Gets list of files"""
-    return (
-        os.path.abspath(os.path.join(directory, filename))
-        for directory, subdir, files in os.walk(root)
-        for filename in files if os.path.splitext(filename)[1] == ".md"
-    )
-
 def process_raw_input(root):
+    """Goes through item in source dir and generates initial data cache"""
     md = markdown.Markdown(extensions=['meta'])
     prepare_cache_directory(os.getcwd())
+    cache = []
     for f in get_files(root):
         data = process_raw_input_entry(f, md)
-        print(data)
+        cache.append(data)
         md.reset()
+
+    return cache
+
+
+def reverse_route(cache):
+    """Goes through cached items and figures out where what goes, and what template to use"""
+    routed = []
+    for item in cache:
+        # Augment cache item with routing data
+        # Add archives, tags, etc
+        item['destination'] = item.get('relpath')
+        item['extension'] = '.html'
+        routed.append(item)
+
+    return routed
+
+def generate_output(routed, out_dir):
+    """Goes through the routed info and writes out the result using templates"""
+    cwd = os.getcwd()
+    results = []
+    for item in routed:
+        out = os.path.splitext(os.path.join(
+            cwd,
+            out_dir,
+            item['destination']
+        ))[0] + item['extension']
+        print("Generating {} from {}".format(out, item['cached']))
+        results.append(True)
+
+    return results
 
 
 def process_raw_input_entry(path, md):
@@ -53,5 +77,16 @@ def get_cache_directory(working_directory):
     return os.path.join(working_directory, '.terp-working', 'cache')
 
 
-process_raw_input('data')
+def get_files(root):
+    """Gets list of files"""
+    return (
+        os.path.abspath(os.path.join(directory, filename))
+        for directory, subdir, files in os.walk(root)
+        for filename in files if os.path.splitext(filename)[1] == ".md"
+    )
+
+
+cache = process_raw_input('data')
+routed = reverse_route(cache)
+report = generate_output(routed, 'out')
 
