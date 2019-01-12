@@ -23,6 +23,11 @@ def reverse_route(cache):
         # Add archives, tags, etc
         item['destination'] = os.path.splitext(item.get('relpath'))[0] + '.html'
         routed.append(item)
+        if item.get('created'):
+            # ... add archive
+            archive = item
+            archive['destination'] = item['created'][0] + '.html'
+            routed.append(archive)
 
     return routed
 
@@ -51,12 +56,14 @@ def process_raw_input_entry(path, md):
         input=path,
         output=destpath
     )
-    return {
+    data = {
         "path": path,
         "relpath": relpath,
         "cached": destpath,
-        "data": md.Meta,
     }
+    for (key, val) in md.Meta.items():
+        data[key] = val
+    return data
 
 
 def prepare_cache_directory(working_directory):
