@@ -21,8 +21,7 @@ def reverse_route(cache):
     for item in cache:
         # Augment cache item with routing data
         # Add archives, tags, etc
-        item['destination'] = item.get('relpath')
-        item['extension'] = '.html'
+        item['destination'] = os.path.splitext(item.get('relpath'))[0] + '.html'
         routed.append(item)
 
     return routed
@@ -32,11 +31,11 @@ def generate_output(routed, out_dir):
     cwd = os.getcwd()
     results = []
     for item in routed:
-        out = os.path.splitext(os.path.join(
+        out = os.path.join(
             cwd,
             out_dir,
             item['destination']
-        ))[0] + item['extension']
+        )
         print("Generating {} from {}".format(out, item['cached']))
         results.append(True)
 
