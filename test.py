@@ -33,7 +33,7 @@ def generate_output(routed, out_dir):
 
 def generate_taxonomy_output(tax, out):
     out = os.path.join(out, tax.get_destination())
-    index = os.path.join(out, 'index' + tax.get_extension())
+    index = tax.slugify(os.path.join(out, 'index' + tax.get_extension()))
 
     print("Generating index: {} at {} using {}".format(
         tax.get_type(), index, tax.get_template(index)
