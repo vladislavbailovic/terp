@@ -33,9 +33,11 @@ def generate_output(routed, out_dir):
 
 def generate_taxonomy_output(tax, out):
     out = os.path.join(out, tax.get_destination())
-    taxonomy = tax.data.get('type')
+    index = os.path.join(out, 'index' + tax.get_extension())
 
-    print("Generating taxonomy index: {}".format(taxonomy, os.path.join(out, 'index.html')))
+    print("Generating index: {} at {} using {}".format(
+        tax.get_type(), index, tax.get_template(index)
+    ))
     # ...
 
     for item in tax.items:
@@ -48,7 +50,7 @@ def generate_taxonomy_output(tax, out):
 
 def generate_item_output(item, out):
     path = os.path.join(out, item.get_destination())
-    print("Generating item output: {}".format(path))
+    print("Generating item output: {} using {}".format(path, item.get_template(path)))
     return True
 
 def process_raw_input_entry(path, md):
