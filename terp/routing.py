@@ -11,24 +11,30 @@ def route(cache):
         )
         if item.get('created'):
             created = item['created'][0]
-            if not taxonomies.get('archives'):
-                taxonomies['archives'] = ItemCollection('html', {'type': 'archives' })
-            if not taxonomies['archives'].get_item_by('type', created):
-                taxonomies['archives'].items.append(ItemCollection(
-                    'html', {'type': created, 'parent_type': 'archives'}
-                ))
-            item['parent_type'] = 'archives'
-            item['relpath'] = os.path.join(
-                'archives',
-                taxonomies['archives'].get_item_by('type', created).get_destination(),
-                os.path.basename(item['relpath'])
-            )
-            taxonomies['archives'].get_item_by('type', created).add_item(item)
+            taxonomies = add_taxonomy_item(taxonomies, 'archives', created, item)
 
     for tax, archive in taxonomies.items():
         routed.append(archive)
 
     return routed
+
+
+def add_taxonomy_item(taxonomies, taxonomy, term, item):
+    if not taxonomies.get(taxonomy):
+        taxonomies[taxonomy] = ItemCollection('html', {'type': taxonomy})
+    if not taxonomies[taxonomy].get_item_by('type', term):
+        taxonomies[taxonomy].items.append(ItemCollection(
+            'html', {'type': term, 'parent_type': taxonomy}
+        ))
+    item['parent_type'] = taxonomy
+    item['relpath'] = os.path.join(
+        taxonomy,
+        taxonomies[taxonomy].get_item_by('type', term).get_destination(),
+        os.path.basename(item['relpath'])
+    )
+    taxonomies['archives'].get_item_by('type', term).add_item(item)
+
+    return taxonomies
 
 
 class Item:
