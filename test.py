@@ -2,6 +2,8 @@ import os
 import shutil
 import markdown
 
+from terp import routing
+
 def process_raw_input(root):
     """Goes through item in source dir and generates initial data cache"""
     md = markdown.Markdown(extensions=['meta'])
@@ -15,37 +17,42 @@ def process_raw_input(root):
     return cache
 
 
-def reverse_route(cache):
-    """Goes through cached items and figures out where what goes, and what template to use"""
-    routed = []
-    for item in cache:
-        # Augment cache item with routing data
-        # Add archives, tags, etc
-        item['destination'] = os.path.splitext(item.get('relpath'))[0] + '.html'
-        routed.append(item)
-        if item.get('created'):
-            # ... add archive
-            archive = item
-            archive['destination'] = item['created'][0] + '.html'
-            routed.append(archive)
-
-    return routed
-
 def generate_output(routed, out_dir):
     """Goes through the routed info and writes out the result using templates"""
     cwd = os.getcwd()
     results = []
     for item in routed:
-        out = os.path.join(
-            cwd,
-            out_dir,
-            item['destination']
-        )
-        print("Generating {} from {}".format(out, item['cached']))
-        results.append(True)
+        result = None
+        if hasattr(item, 'add_item') and callable(getattr(item, 'add_item')):
+            result = generate_taxonomy_output(item, out_dir)
+        else:
+            result = generate_item_output(item, out_dir)
+        results.append(result)
 
     return results
 
+def generate_taxonomy_output(tax, out):
+    taxonomy = tax.data.get('type')
+    if not taxonomy:
+        print("Invalid taxonomy item")
+        return None
+    out = os.path.join(out, taxonomy)
+
+    print("Generating taxonomy index: {}".format(taxonomy, os.path.join(out, 'index.html')))
+    # ...
+
+    for item in tax.items:
+        if hasattr(item, 'add_item') and callable(getattr(item, 'add_item')):
+            generate_taxonomy_output(item, out)
+        else:
+            generate_item_output(item, out)
+
+    return True
+
+def generate_item_output(item, out):
+    path = os.path.join(out, item.get_destination())
+    print("Generating item output: {}".format(path))
+    return True
 
 def process_raw_input_entry(path, md):
     cwd = os.getcwd()
@@ -93,6 +100,6 @@ def get_files(root):
 
 
 cache = process_raw_input('data')
-routed = reverse_route(cache)
+routed = routing.route(cache)
 report = generate_output(routed, 'out')
 
