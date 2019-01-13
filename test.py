@@ -23,7 +23,7 @@ def generate_output(routed, out_dir):
     results = []
     for item in routed:
         result = None
-        if hasattr(item, 'add_item') and callable(getattr(item, 'add_item')):
+        if hasattr(item, 'items'):
             result = generate_taxonomy_output(item, out_dir)
         else:
             result = generate_item_output(item, out_dir)
@@ -32,17 +32,14 @@ def generate_output(routed, out_dir):
     return results
 
 def generate_taxonomy_output(tax, out):
+    out = os.path.join(out, tax.get_destination())
     taxonomy = tax.data.get('type')
-    if not taxonomy:
-        print("Invalid taxonomy item")
-        return None
-    out = os.path.join(out, taxonomy)
 
     print("Generating taxonomy index: {}".format(taxonomy, os.path.join(out, 'index.html')))
     # ...
 
     for item in tax.items:
-        if hasattr(item, 'add_item') and callable(getattr(item, 'add_item')):
+        if hasattr(item, 'items'):
             generate_taxonomy_output(item, out)
         else:
             generate_item_output(item, out)

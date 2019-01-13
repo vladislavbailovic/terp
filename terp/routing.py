@@ -53,6 +53,9 @@ class ItemCollection(Item):
             Item(self.format, data)
         )
 
+    def get_destination(self):
+        return self.data.get('type')
+
     def get_item_by(self, key, val):
         for item in self.items:
             if val == item.data.get(key):
