@@ -35,11 +35,6 @@ def add_taxonomy_item(taxonomies, taxonomy, term, item):
             'html', {'type': term, 'parent_type': taxonomy}
         ))
     item['parent_type'] = taxonomy
-    item['relpath'] = os.path.join(
-        taxonomy,
-        taxonomies[taxonomy].get_item_by('type', term).get_destination(),
-        os.path.basename(item['relpath'])
-    )
     taxonomies[taxonomy].get_item_by('type', term).add_item(item)
 
     return taxonomies

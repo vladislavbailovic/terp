@@ -44,8 +44,6 @@ def generate_taxonomy_output(tax, out):
     for item in tax.items:
         if hasattr(item, 'items'):
             generate_taxonomy_output(item, out)
-        else:
-            generate_item_output(item, out)
 
     return True
 
