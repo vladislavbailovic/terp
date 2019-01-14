@@ -34,8 +34,9 @@ def add_taxonomy_item(taxonomies, taxonomy, term, item):
         taxonomies[taxonomy].items.append(ItemCollection(
             'html', {'type': term, 'parent_type': taxonomy}
         ))
-    item['parent_type'] = taxonomy
-    taxonomies[taxonomy].get_item_by('type', term).add_item(item)
+    data = item.copy()
+    data['parent_type'] = taxonomy
+    taxonomies[taxonomy].get_item_by('type', term).add_item(data)
 
     return taxonomies
 
