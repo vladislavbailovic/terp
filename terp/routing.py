@@ -24,6 +24,12 @@ def route(cache):
     for tax, archive in taxonomies.items():
         routed.append(archive)
 
+    items = routed.copy()
+    routed.append(Item('sitemap-xml', {
+        'relpath': 'sitemap',
+        'items': items,
+    }))
+
     return routed
 
 
@@ -43,7 +49,8 @@ def add_taxonomy_item(taxonomies, taxonomy, term, item):
 
 class Item:
     extensions_map = {
-        'html': '.html'
+        'html': '.html',
+        'sitemap-xml': '.xml'
     }
     def __init__(self, format, data):
         self.data = data
