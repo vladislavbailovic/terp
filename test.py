@@ -2,7 +2,7 @@ import os
 import shutil
 import markdown
 
-from terp import routing
+from terp.routing import router
 
 def process_raw_input(root):
     """Goes through item in source dir and generates initial data cache"""
@@ -98,6 +98,6 @@ def get_files(root):
 
 
 cache = process_raw_input('data')
-routed = routing.route(cache)
+routed = router.route(cache)
 report = generate_output(routed, 'out')
 
