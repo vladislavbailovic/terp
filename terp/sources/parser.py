@@ -2,6 +2,8 @@ import os
 import shutil
 import markdown
 
+from .data import Cache
+
 
 def parse(root):
     """Goes through item in source dir and generates initial data cache"""
@@ -9,8 +11,8 @@ def parse(root):
     prepare_cache_directory(os.getcwd())
     cache = []
     for f in get_files(root):
-        data = process_raw_input_entry(f, md)
-        cache.append(data)
+        item = process_raw_input_entry(f, md)
+        cache.append(item)
         md.reset()
 
     return cache
@@ -25,14 +27,14 @@ def process_raw_input_entry(path, md):
         input=path,
         output=destpath
     )
-    data = {
-        "path": path,
-        "relpath": relpath,
-        "cached": destpath,
-    }
+    item = Cache(
+        path=path,
+        relpath=relpath,
+        cached=destpath
+    )
     for (key, val) in md.Meta.items():
-        data[key] = val
-    return data
+        item[key] = val
+    return item
 
 
 def prepare_cache_directory(working_directory):
