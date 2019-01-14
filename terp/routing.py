@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 
 def route(cache):
@@ -10,7 +11,11 @@ def route(cache):
             Item('html', item)
         )
         if item.get('created'):
-            created = item['created'][0]
+            when = datetime.strptime(
+                item['created'][0],
+                '%Y-%m-%d'
+            )
+            created = when.strftime('%Y-%m')
             taxonomies = add_taxonomy_item(taxonomies, 'archives', created, item)
         if item.get('belongs-to'):
             episode = item['belongs-to'][0]
@@ -61,7 +66,7 @@ class Item:
         type = self.data.get('type')
         return type if type else 'item'
 
-    def get_template(self, path=None):
+    def get_template(self):
         relpath = self.get_destination()
         used = set()
 
