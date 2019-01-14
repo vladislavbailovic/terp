@@ -12,6 +12,7 @@ def parse(root):
     cache = []
     for f in get_files(root):
         item = process_raw_input_entry(f, md)
+        print(item)
         cache.append(item)
         md.reset()
 
@@ -28,7 +29,7 @@ def process_raw_input_entry(path, md):
         output=destpath
     )
     item = Cache(
-        path=path,
+        source=path,
         relpath=relpath,
         cached=destpath
     )
