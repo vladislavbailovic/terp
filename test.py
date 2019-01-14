@@ -51,7 +51,7 @@ def generate_taxonomy_output(tax, out):
 
 def generate_item_output(item, out):
     path = os.path.join(out, item.get_destination())
-    print("Generating item output: {} using {}".format(path, item.get_template(path)))
+    print("Generating item output: {} using {}".format(path, item.get_template()))
     return True
 
 def process_raw_input_entry(path, md):
