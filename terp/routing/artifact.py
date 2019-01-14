@@ -1,11 +1,7 @@
 import os
+from . import types
 
 class Item:
-    extensions_map = {
-        'html': '.html',
-        'amp': '.amp',
-        'sitemap-xml': '.xml',
-    }
     def __init__(self, format, data):
         self.data = data
         self.format = format
@@ -17,7 +13,7 @@ class Item:
         return self.slugify(os.path.splitext(relpath)[0] + self.get_extension())
 
     def get_extension(self):
-        return Item.extensions_map[self.format]
+        return getattr(types, self.format)[1]
 
     def get_type(self):
         type = self.data.get('type')

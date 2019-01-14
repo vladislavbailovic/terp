@@ -2,13 +2,15 @@ import os
 from datetime import datetime
 
 from .artifact import Item, ItemCollection
+from . import types
 
 
 def route(cache):
     """Goes through cached items and figures out where what goes, and what template to use"""
     routed = []
     taxonomies = {}
-    for format in ['html', 'amp']:
+    for type in [types.HTML, types.AMP]:
+        format = type[0]
         for item in cache:
             routed.append(
                 Item(format, item)
@@ -28,7 +30,7 @@ def route(cache):
         routed.append(archive)
 
     items = routed.copy()
-    routed.append(Item('sitemap-xml', {
+    routed.append(Item(types.SITEMAP[0], {
         'relpath': 'sitemap',
         'items': items,
     }))
