@@ -33,12 +33,13 @@ def generate_output(routed, out_dir):
 
 def generate_taxonomy_output(tax, out):
     out = os.path.join(out, tax.get_destination())
-    index = tax.slugify(os.path.join(out, 'index' + tax.get_extension()))
 
-    print("Generating index: {} at {} using {}".format(
-        tax.get_type(), index, tax.get_template(index)
-    ))
-    # ...
+    index = tax.get_index()
+    if index:
+        print("Generating index: {}".format(
+            index.get_type()
+        ))
+        generate_item_output(index, out)
 
     for item in tax.items:
         if hasattr(item, 'items'):

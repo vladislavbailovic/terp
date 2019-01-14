@@ -62,7 +62,7 @@ class Item:
         return type if type else 'item'
 
     def get_template(self, path=None):
-        relpath = path if path else self.get_destination()
+        relpath = self.get_destination()
         used = set()
 
         dir_tpl = os.path.basename(os.path.dirname(relpath))
@@ -72,7 +72,8 @@ class Item:
         parent_type_tpl = None
         if self.data.get('parent_type'):
             parent_type_tpl = self.data['parent_type'] + '-' + self.get_type()
-            dir_tpl = self.data['parent_type'] + '-' + dir_tpl
+            if dir_tpl:
+                dir_tpl = self.data['parent_type'] + '-' + dir_tpl
 
         tpl = [self.slugify(x) for x in [
             os.path.splitext(os.path.basename(relpath))[0],
@@ -96,6 +97,17 @@ class ItemCollection(Item):
         self.items.append(
             Item(self.format, data)
         )
+
+    def has_index(self):
+        return True
+
+    def get_index(self):
+        if not self.has_index():
+            return None
+        data = self.data.copy()
+        data['relpath'] = 'index' + self.get_extension()
+        data['items'] = self.items
+        return Item(self.format, data)
 
     def get_destination(self):
         return self.slugify(self.get_type())
