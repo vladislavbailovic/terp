@@ -41,10 +41,10 @@ def route(cache):
 def add_taxonomy_item(taxonomies, taxonomy, term, item, format):
     tax_idx = taxonomy + format
     if not taxonomies.get(tax_idx):
-        taxonomies[tax_idx] = ItemCollection(format, {'type': taxonomy})
+        taxonomies[tax_idx] = ItemCollection(format, {'type': taxonomy, 'title': taxonomy})
     if not taxonomies[tax_idx].get_item_by('type', term):
         taxonomies[tax_idx].items.append(ItemCollection(
-            format, {'type': term, 'parent_type': taxonomy}
+            format, {'type': term, 'parent_type': taxonomy, 'title': term}
         ))
     data = item.copy()
     data['parent_type'] = taxonomy
