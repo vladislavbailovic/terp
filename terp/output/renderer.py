@@ -46,6 +46,12 @@ def generate_item_output(item, out):
     try:
         template = Env.get_or_select_template(tpl_cascade)
         print("Generating item output: {} using {}".format(path, template))
+        if item.data.get('cached'):
+            with open(item.data.get('cached'), 'r') as f:
+                content = f.read()
+        else:
+            content = ''
+        print(template.render(item=item, content=content))
     except TemplatesNotFound:
         pass
     return True
