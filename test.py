@@ -18,8 +18,6 @@ def generate_output(routed, out_dir):
     return results
 
 def generate_taxonomy_output(tax, out):
-    out = os.path.join(out, tax.get_destination())
-
     index = tax.get_index()
     if index:
         print("Generating index: {}".format(

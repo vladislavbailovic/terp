@@ -63,12 +63,15 @@ class ItemCollection(Item):
         if not self.has_index():
             return None
         data = self.data.copy()
-        data['relpath'] = 'index' + self.get_extension()
+        data['relpath'] = os.path.join(self.get_destination(), 'index') + self.get_extension()
         data['items'] = self.items
         return Item(self.format, data)
 
     def get_destination(self):
-        return self.slugify(self.get_type())
+        path = self.get_type()
+        if self.data.get('parent_type'):
+            path = os.path.join(self.data['parent_type'], path)
+        return self.slugify(path)
 
     def get_item_by(self, key, val):
         for item in self.items:
