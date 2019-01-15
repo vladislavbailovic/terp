@@ -1,4 +1,16 @@
 import os
+from jinja2 import Environment, PackageLoader, FileSystemLoader, ChoiceLoader, select_autoescape, TemplatesNotFound
+
+
+Env = Environment(
+    loader=ChoiceLoader([
+        PackageLoader('terp', 'tpl'),
+        FileSystemLoader(os.getcwd())
+    ]),
+    autoescape=select_autoescape(
+        default=True
+    )
+)
 
 
 def out(routed, out_dir):
@@ -19,9 +31,6 @@ def out(routed, out_dir):
 def generate_taxonomy_output(tax, out):
     index = tax.get_index()
     if index:
-        print("Generating index: {}".format(
-            index.get_type()
-        ))
         generate_item_output(index, out)
 
     for item in tax.items:
@@ -33,5 +42,10 @@ def generate_taxonomy_output(tax, out):
 
 def generate_item_output(item, out):
     path = os.path.join(out, item.get_destination())
-    print("Generating item output: {} using {}".format(path, item.get_template()))
+    tpl_cascade = item.get_template()
+    try:
+        template = Env.get_or_select_template(tpl_cascade)
+        print("Generating item output: {} using {}".format(path, template))
+    except TemplatesNotFound:
+        pass
     return True
